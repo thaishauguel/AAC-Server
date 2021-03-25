@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const UserModel = require("../models/UserModel");
+const uploader = require("./../config/cloudinary");
+
 
 const salt = 10;
 
@@ -24,19 +26,25 @@ router.post("/signin", (req, res, next) => {
     .catch(next);
 });
 
-router.post("/signup", (req, res, next) => {
-  const { username, email, password, avatar, instagram, website,description, credit } = req.body;
-  if (req.file){let avatar = req.file.path};
+router.post("/signup", uploader.single("avatar"),  (req, res, next) => {
+  console.log('coucou0' )
+
+  let { username, email, password, avatar, instagram, website,description, credit } = req.body;
+  if (req.file.path){ avatar = req.file.path};
+  console.log('coucou1' )
 
   if (!email || !password || !username) {
     res.status(400).json({ message: "Email, username and password required" });
     return;
   }
+  console.log('coucou2' )
+
   UserModel.findOne({ email })
     .then((userDocument) => {
       if (userDocument) {
         return res.status(400).json({ message: "Email already taken" });
       }
+      console.log('coucou4' )
 
       const hashedPassword = bcrypt.hashSync(password, salt);
       const newUser = {
@@ -51,11 +59,14 @@ router.post("/signup", (req, res, next) => {
         description,
         credit
       };
+      console.log('newUser', newUser)
 
       UserModel.create(newUser)
         .then((newUserDocument) => {
           /* Login on signup */
+          console.log(newUserDocument)
           req.session.currentUser = newUserDocument._id;
+          // console.log(req.session.currentUser)
           res.redirect("/api/auth/isLoggedIn");
         })
         .catch(next);
@@ -64,6 +75,7 @@ router.post("/signup", (req, res, next) => {
 });
 
 router.get("/isLoggedIn", (req, res, next) => {
+  console.log('coucou', req.session.currentUser )
   if (!req.session.currentUser)
     return res.status(401).json({ message: "Unauthorized" });
 
@@ -90,7 +102,7 @@ router.get("/update", (req, res, next) => {
 
 });
 
-router.post("/update", (req, res, next) => {
+router.post("/update", uploader.single("avatar"), (req, res, next) => {
     const { username, email, avatar, instagram, website,description, credit } = req.body;
     if (req.file){let avatar = req.file.path};
 
