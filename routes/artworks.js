@@ -13,7 +13,7 @@ router.get("/", (req, res, next) => {
 });
 
 // get 1 artwork (artwork detail page)
-router.get("/:id", (req, res, next) => {
+router.get("/:id([a-z0-9]{24})", (req, res, next) => {
   ArtworkModel.findById(req.params.id)
     .populate("creator")
     .populate("owner")
@@ -23,7 +23,7 @@ router.get("/:id", (req, res, next) => {
 
 // get all artworks owned by current user (for user dashboard)
 router.get("/my-collection", (req, res, next) => {
-  ArtworkModel.find({ owner: req.session.currentUser })
+  ArtworkModel.find({ owner : req.session.currentUser })
     .populate("creator")
     .then((myArtworks) => res.status(200).json(myArtworks))
     .catch(next);
@@ -45,10 +45,10 @@ router.post("/new", uploader.single("image"), (req, res, next) => {
 });
 
 // update an artwork (for user dashboard) - only creators may update their own artwork
-router.patch("/:id", uploader.single("image"), (req, res, next) => {
+router.patch("/:id([a-z0-9]{24})", uploader.single("image"), (req, res, next) => {
   ArtworkModel.findById(req.params.id)
     .then((artwork) => {
-      if (artwork.creator !== req.session.currentUser) {
+      if (artwork.creator.toString() !== req.session.currentUser) {
         next({
           message: "Unauthorised to update this artwork",
           status: 403,
@@ -76,7 +76,7 @@ router.patch("/:id", uploader.single("image"), (req, res, next) => {
 router.delete("/:id", (req, res, next) => {
   ArtworkModel.findById(req.params.id)
     .then((artwork) => {
-      if (artwork.creator !== req.session.currentUser) {
+      if (artwork.creator.toString() !== req.session.currentUser) {
         next({
           message: "Unauthorised to delete this artwork",
           status: 403,
@@ -100,13 +100,20 @@ router.get("/artist/:id", (req, res, next) => {
 
 // find all artworks matching a search input --> as creator or in description
 router.get("/results", (req, res, next) => {
-  const exp = new RegExp(req.query);
-  const query = { $regex: exp };
-  ArtworkModel.find({ $or: [{ creator: query }, { description: query }] })
-    .populate("creator")
-    .populate("owner")
-    .then((artworks) => res.status(200).json(artworks))
-    .catch(next);
+    console.log(req.query)
+//   const exp = new RegExp(req.query);
+//   const query = { $regex: exp };
+
+//     const search = req.query.search;
+// // console.log("search: ",typeof search)
+  
+//   ArtworkModel.find( {creator: {$regex: search, $options: "i"} } )
+// // {$regex: req.query, $options: "i"}   {$regex: req.query, $options: "i" }
+// // { $or: [{ creator: search} , { description: search }] }  
+//   .populate("creator")
+//     .populate("owner")
+//     .then((artworks) => res.status(200).json(artworks))
+//     .catch(next);
 });
 
 module.exports = router;
