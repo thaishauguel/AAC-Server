@@ -22,7 +22,7 @@ const auctionSchema = new Schema({
         date: Date
     }],
     active:{
-        type: boolean, 
+        type: Boolean, 
         default: true
     },
     initialPrice: Number,
@@ -30,5 +30,4 @@ const auctionSchema = new Schema({
     endingDate: Date
 })
 
-const AuctionModel = mongoose.model("users", auctionSchema);
-module.exports = AuctionModel;
+module.exports = mongoose.model("auctions", auctionSchema);

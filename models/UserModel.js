@@ -18,21 +18,17 @@ const userSchema = new Schema({
     },
     avatar: {
         type: String,
-        default: "urlToDefined"
+        default: "https://cdn.boldomatic.com/content/post/fl4sZw/LOVE-ME-I-M-AN-ARTIST?size=800"
     },
     networks: {
         instagram: String,
         website: String,
     },
     description: String,
-    //AllMyCreations: [(artworkCollection)],
-    // CurrentCollection:[],
-    // AllMyPurchases: [ObjectId(artworkCollection)],
-    //ArtToSell: [ObjectId]
+    credit: Number
 
 
 });
 
 
-const UserModel = mongoose.model("users", userSchema);
-module.exports = UserModel;
+module.exports = mongoose.model("users", userSchema);

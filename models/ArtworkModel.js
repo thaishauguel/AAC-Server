@@ -30,8 +30,7 @@ const artworkSchema = new Schema({
   },
 });
 
-const ArtworkModel = mongoose.model("artworks", artworkSchema);
-module.exports = ArtworkModel;
+module.exports = mongoose.model("artworks", artworkSchema);
 
 //IF (!forSale && bids.length !== 0) ==> Owner == bids[0][0].bidder(.username after populate)
 
