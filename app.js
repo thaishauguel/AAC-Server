@@ -44,11 +44,12 @@ app.use(function (req, res, next) {
 
 const authRouter = require("./routes/auth");
 const auctionsRouter = require("./routes/auctions");
+const artworksRouter = require("./routes/artworks");
 
 
 app.use("/api/auth", authRouter);
 app.use("/api/auctions", auctionsRouter);
-
+app.use("/api/artworks", artworksRouter);
 
 // 404 Middleware
 app.use((req, res, next) => {
