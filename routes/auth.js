@@ -59,7 +59,7 @@ router.post("/signup", uploader.single("avatar"),  (req, res, next) => {
         description,
         credit
       };
-      console.log('newUser', newUser)
+      // console.log('newUser', newUser)
 
       UserModel.create(newUser)
         .then((newUserDocument) => {
