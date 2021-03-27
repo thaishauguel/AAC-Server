@@ -45,17 +45,20 @@ app.use(function (req, res, next) {
 const authRouter = require("./routes/auth");
 const auctionsRouter = require("./routes/auctions");
 const artworksRouter = require("./routes/artworks");
+const profileRouter = require("./routes/profile");
 
 
 app.use("/api/auth", authRouter);
 app.use("/api/auctions", auctionsRouter);
 app.use("/api/artworks", artworksRouter);
+app.use("/api/profile", profileRouter);
+
 
 // 404 Middleware
 app.use((req, res, next) => {
   const error = new Error("Ressource not found.");
   error.status = 404;
-  next(err);
+  next(error);
 });
 
 // Error handler middleware

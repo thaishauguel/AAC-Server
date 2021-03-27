@@ -21,13 +21,7 @@ router.get("/:id", (req, res, next) => {
     .catch(next);
 });
 
-// get all artworks owned by current user (for user dashboard)
-router.get("/my-collection", (req, res, next) => {
-  ArtworkModel.find({ owner: req.session.currentUser })
-    .populate("creator")
-    .then((myArtworks) => res.status(200).json(myArtworks))
-    .catch(next);
-});
+
 
 // create a new artwork (for user dashboard)
 router.post("/new", uploader.single("image"), (req, res, next) => {
