@@ -29,6 +29,7 @@ router.get("/:id/last-auction", async (req, res, next)=> {
     catch(err) {
         next(err)
     }
+})
 
 router.post("/new", (req, res, next)=>{
     let {_artworkId, initialPrice, startingDate}= req.body
@@ -50,8 +51,6 @@ router.post("/new", (req, res, next)=>{
         .catch(next)
     })
     .catch(next)
-
-
 })
 
 module.exports = router;
