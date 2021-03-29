@@ -34,5 +34,6 @@ module.exports = mongoose.model("artworks", artworkSchema);
 
 //IF (!forSale && bids.length !== 0) ==> Owner == bids[0][0].bidder(.username after populate)
 
-//             vente 1                                 vente 2
+//             vente en cours or last vente                  vente d'avant -1       vente d'avant -2
 // bid:[[{user1, 30},{user2, 20},{user1, 10}], [{user3, 30},{user5, 20},{user3, 10}], []]
+//        last bid      bid d'avant -1          
