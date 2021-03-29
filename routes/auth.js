@@ -30,7 +30,7 @@ router.post("/signup", uploader.single("avatar"),  (req, res, next) => {
   console.log('coucou0' )
 
   let { username, email, password, avatar, instagram, website,description, credit } = req.body;
-  if (req.file.path){ avatar = req.file.path};
+  if (req.file){ avatar = req.file.path};
   console.log('coucou1' )
 
   if (!email || !password || !username) {
