@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
+const uploader = require("./../config/cloudinary");
 const ArtworkModel = require("../models/ArtworkModel");
 const AuctionModel = require("../models/AuctionModel");
+const UserModel = require("../models/UserModel");
 
 // const uploader = require("./../config/cloudinary");
 
@@ -59,6 +61,37 @@ router.get("/my-collection", (req, res, next) => {
     .then((myArtworks) => res.status(200).json(myArtworks))
     .catch(next);
 });
+
+// get current user (for user dashboard)
+router.get("/my-profile", (req, res, next) => {
+  UserModel.findById(req.session.currentUser )
+    .then((user) => res.status(200).json(user))
+    .catch(next);
+});
+
+// Update current user (for user dashboard)
+router.patch("/my-profile/update", uploader.single("avatar"), (req, res, next) => {
+  let { username, email, avatar, instagram, website,description, credit } = req.body;
+  if (req.file){ avatar = req.file.path};
+
+  UserModel.findByIdAndUpdate(req.session.currentUser, 
+    {
+      username,
+      email,
+      avatar,
+      networks: {
+        instagram,
+        website
+      },
+      description,
+      credit
+  } 
+  ,{new:true})
+  .then((user)=> {
+    res.status(200).json(user)})
+  .catch(next)
+});
+
 
 
 // get all my creations

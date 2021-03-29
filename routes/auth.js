@@ -37,7 +37,7 @@ router.post("/signup", uploader.single("avatar"),  (req, res, next) => {
     res.status(400).json({ message: "Email, username and password required" });
     return;
   }
-  console.log('coucou2' )
+  console.log('coucou2')
 
   UserModel.findOne({ email })
     .then((userDocument) => {
@@ -103,8 +103,8 @@ router.get("/update", (req, res, next) => {
 });
 
 router.post("/update", uploader.single("avatar"), (req, res, next) => {
-    const { username, email, avatar, instagram, website,description, credit } = req.body;
-    if (req.file){let avatar = req.file.path};
+    let { username, email, avatar, instagram, website,description, credit } = req.body;
+    if (req.file){ avatar = req.file.path};
 
   UserModel.findByIdAndUpdate(req.session.currentUser, {
     username,
