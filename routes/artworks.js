@@ -26,8 +26,8 @@ router.get("/:id([a-z0-9]{24})", (req, res, next) => {
 
 // create a new artwork (for user dashboard)
 router.post("/new", uploader.single("image"), (req, res, next) => {
-  let { title, description } = req.body;
-  let image = req.file.path;
+  let { title, description, image } = req.body;
+  if(req.file){ image = req.file.path}
   ArtworkModel.create({
     title,
     description,

@@ -19,6 +19,12 @@ router.get("/my-current-sales", async (req, res, next) => {
     try{const currentSales = await AuctionModel.find({ _auctionOwnerId: req.session.currentUser, active: true })
       .populate("_artworkId" )
       .populate({
+        path: '_artworkId',
+        populate: {
+          path: 'creator',
+        }
+      })
+      .populate({
         path: 'bids',
         populate: {
           path: 'bidder',
