@@ -53,4 +53,25 @@ router.post("/new", (req, res, next)=>{
     .catch(next)
 })
 
+router.patch("/:id/new-bid", (req, res, next)=>{
+    const { bidValue } = req.body
+    const bidder = req.session.currentUser
+    const date = Date.now()
+    const newBid= {
+        bidValue,
+        bidder,
+        date,
+    }
+    AuctionModel.findByIdAndUpdate(req.params.id,
+        { $push: {
+            bids: {
+               $each: [ newBid ],
+               $position: 0
+        }}},
+        { new: true }
+    )
+    .then((auction)=>res.status(200).json(auction))
+    .catch(next)
+})
+
 module.exports = router;

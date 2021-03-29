@@ -102,14 +102,26 @@ router.get("/results", async (req, res, next) => {
   console.log(req.query);
   const query = new RegExp(req.query.search, "i");
   console.log("query: ",query)
-  try{
-    let artworks = await ArtworkModel.find()
-    .populate("creator", ["username", "description", "avatar"])
-    let matchArtist = artworks.filter(doc=>doc.creator.username.match(query)).filter((doc, index, arr) =>
-    index === arr.findIndex((el) => el.creator.username === doc.creator.username))
-    let matchArtwork = artworks.filter(doc=>doc.title.match(query) || doc.description.match(query));
-    res.status(200).json({matchArtist: matchArtist, matchArtwork: matchArtwork})
-  } catch(err) {
+  try {
+    let artworks = await ArtworkModel.find().populate("creator", [
+      "username",
+      "description",
+      "avatar",
+    ]);
+    let matchArtist = artworks
+      .filter((doc) => doc.creator.username.match(query))
+      .filter(
+        (doc, index, arr) =>
+          index ===
+          arr.findIndex((el) => el.creator.username === doc.creator.username)
+      );
+    let matchArtwork = artworks.filter(
+      (doc) => doc.title.match(query) || doc.description.match(query)
+    );
+    res
+      .status(200)
+      .json({ matchArtist: matchArtist, matchArtwork: matchArtwork });
+  } catch (err) {
     console.log(err);
   }
 });
