@@ -7,8 +7,8 @@ const Usermodel = require("./../models/UserModel");
 // get all artworks which are for sale (for homepage)
 router.get("/", (req, res, next) => {
   ArtworkModel.find({ forSale: true })
-    .populate("creator")
-    .populate("owner")
+    .populate("creator", ["username", "description", "avatar"])
+    .populate("owner", ["username", "avatar"])
     .then((artworks) => res.status(200).json(artworks))
     .catch(next);
 });
@@ -16,8 +16,8 @@ router.get("/", (req, res, next) => {
 // get 1 artwork (artwork detail page)
 router.get("/:id([a-z0-9]{24})", (req, res, next) => {
   ArtworkModel.findById(req.params.id)
-    .populate("creator")
-    .populate("owner")
+    .populate("creator", ["username", "description", "avatar"])
+    .populate("owner", ["username", "avatar"])
     .then((artwork) => res.status(200).json(artwork))
     .catch(next);
 });

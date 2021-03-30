@@ -41,6 +41,7 @@ router.post("/signup", uploader.single("avatar"),  (req, res, next) => {
 
   UserModel.findOne({ email })
     .then((userDocument) => {
+      console.log(userDocument)
       if (userDocument) {
         return res.status(400).json({ message: "Email already taken" });
       }
@@ -144,10 +145,10 @@ router.post('/update-password',async(req, res, next)=>{
 router.get("/delete", async (req, res, next) => {
   try {
     await UserModel.findByIdAndRemove(req.session.currentUser);
-    req.session.destroy(err => {// We have to destroy the session here, otherwise we are not signed out.
-      res.sendStatus(204);
-    });
-    
+    req.session.destroy()
+    console.log("req.session ", req.session)
+    res.sendStatus(204).redirect("/api/auth/isLoggedIn")
+      // err => {// We have to destroy the session here, otherwise we are not signed out.
   } catch (err) {
     next(err);
   }
