@@ -19,12 +19,10 @@ router.get("/:id/last-auction", async (req, res, next)=> {
             path: 'bids',
             populate: {
               path: 'bidder',
-              select: ["username", "avatar"]
+              select: ["username"]
             }
           }, )
-          console.log('aucitions', auctions)
         const LastAuction = auctions[0]
-        // console.log(LastAuction)
         res.status(200).json(LastAuction)
     }
     catch(err) {
