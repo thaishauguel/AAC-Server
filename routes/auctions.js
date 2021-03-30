@@ -14,7 +14,7 @@ router.get("/", (req, res, next)=>{
 
 router.get("/:id/last-auction", async (req, res, next)=> {
     try{
-        const auctions = await AuctionModel.find({_artworkId : req.params.id})
+        const auctions = await AuctionModel.find({_artworkId : req.params.id}).sort({startingDate:-1})
         .populate({
             path: 'bids',
             populate: {
@@ -22,8 +22,9 @@ router.get("/:id/last-auction", async (req, res, next)=> {
               select: ["username", "avatar"]
             }
           }, )
+          console.log('aucitions', auctions)
         const LastAuction = auctions[0]
-        console.log(LastAuction)
+        // console.log(LastAuction)
         res.status(200).json(LastAuction)
     }
     catch(err) {
