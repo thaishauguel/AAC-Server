@@ -37,4 +37,20 @@ router.post("/new", (req, res, next)=>{
 
 })
 
+router.patch("/close-auction/:id", (req,res,next)=>{
+    const {owner}=req.body
+    console.log('ceci est mon req.body', req.body)
+AuctionModel.findByIdAndUpdate(req.params.id, {active:false}, {new:true})
+.then((auction)=>{
+    res.status(200).json(auction)
+        ArtworkModel.findByIdAndUpdate(auction._artworkId, {forSale :false, owner})
+        .then(()=>console.log("auction closed"))
+        .catch(next)
+}
+)
+.catch(next)
+
+})
+
+
 module.exports = router;

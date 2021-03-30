@@ -13,17 +13,17 @@ require("../config/dbConnection");
 
   let auctions = [
     {
-        _artworkId: "605ca57ebf9bfa29167c727b",
-        _auctionOwnerId: "605ca50000efba28d2095e14",
-        bids: [{bidder :"605ca50000efba28d2095e15", bidValue :800, date: Date.now() }, {bidder :"605ca50000efba28d2095e13", bidValue :700, date: Date.now() }],
+        _artworkId: "60620195ddc9f96e93170dad",
+        _auctionOwnerId: "605ca50000efba28d2095e13",
+        bids: [{bidder :"605ca50000efba28d2095e15", bidValue :800, date: Date.now() }, {bidder :"605ca50000efba28d2095e14", bidValue :700, date: Date.now() }],
         active: true,
         initialPrice: "600",
         startingDate: Date.now(),
     },
     {
-      _artworkId: "605ca57ebf9bfa29167c727a",
-      _auctionOwnerId: "605ca50000efba28d2095e13",
-      bids: [{bidder :"605ca50000efba28d2095e14", bidValue :800, date: Date.now() }, {bidder :"605ca50000efba28d2095e15", bidValue :750, date: Date.now() }],
+      _artworkId: "60620195ddc9f96e93170dae",
+      _auctionOwnerId: "605ca50000efba28d2095e14",
+      bids: [{bidder :"605ca50000efba28d2095e13", bidValue :800, date: Date.now() }, {bidder :"605ca50000efba28d2095e15", bidValue :750, date: Date.now() }],
       active: true,
       initialPrice: "600",
       startingDate: Date.now(),
