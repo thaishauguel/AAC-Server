@@ -90,5 +90,26 @@ AuctionModel.findByIdAndUpdate(req.params.id, {active:false}, {new:true})
 
 })
 
+// delete an auction (only the creator of the auction may delete it)
+router.delete("/:id", (req, res, next) => {
+    AuctionModel.findById(req.params.id)
+    .then((auction) => {
+      if (auction._auctionOwnerId.toString() !== req.session.currentUser) {
+        next({
+          message: "Unauthorised to delete this auction",
+          status: 403,
+        });
+      } else {
+        ArtworkModel.findByIdAndUpdate(auction._artworkId, {forSale :false})
+        .then(()=>console.log("auction closed"))
+        .catch(next)
+        AuctionModel.findByIdAndDelete(req.params.id)
+          .then((auction) => res.status(200).json(auction))
+          .catch(next);
+      }
+    })
+    .catch((err) => next(err));
+
+})
 
 module.exports = router;
