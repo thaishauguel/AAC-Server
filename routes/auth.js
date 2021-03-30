@@ -66,7 +66,7 @@ router.post("/signup", uploader.single("avatar"),  (req, res, next) => {
           /* Login on signup */
           console.log(newUserDocument)
           req.session.currentUser = newUserDocument._id;
-          // console.log(req.session.currentUser)
+          console.log(req.session.currentUser)
           res.redirect("/api/auth/isLoggedIn");
         })
         .catch(next);
@@ -126,7 +126,7 @@ router.get('/update-password', (req, res, next)=>{
   res.redirect("/api/auth/isLoggedIn");
 })
   
-router.post('/update-password',async(req, res, next)=>{
+router.patch('/update-password',async(req, res, next)=>{
     let {formerPassword, newPassword}=req.body
     const user= await UserModel.findById(req.session.currentUser)
     const isSamePassword = bcrypt.compareSync(formerPassword, user.password);

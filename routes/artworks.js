@@ -6,9 +6,8 @@ const Usermodel = require("./../models/UserModel");
 
 // get all artworks which are for sale (for homepage)
 router.get("/", (req, res, next) => {
-  ArtworkModel.find({ forSale: true })
+  ArtworkModel.find({ forSale: true }).sort({title:1})
     .populate("creator")
-    .populate("owner")
     .then((artworks) => res.status(200).json(artworks))
     .catch(next);
 });
@@ -52,8 +51,8 @@ router.patch(
             status: 403,
           });
         } else {
-          let { title, description } = req.body;
-          let image = req.file.path;
+          let { title, description, image } = req.body;
+          if (req.file){image = req.file.path};
           ArtworkModel.findByIdAndUpdate(
             req.params.id,
             {
