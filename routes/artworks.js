@@ -92,25 +92,36 @@ router.delete("/:id", (req, res, next) => {
 // get all artworks from a specific artist (for artist page, with bio)
 router.get("/artist/:id", (req, res, next) => {
   ArtworkModel.find({ creator: req.params.id })
-    .populate("creator")
+    .populate("creator", ["username", "description", "avatar", "networks"])
     .then((artworks) => res.status(200).json(artworks))
     .catch(next);
 });
 
-// find all artworks matching a search input --> in title or in description
+// find all creators (username) and artworks (title/description) matching a search input 
 router.get("/results", async (req, res, next) => {
   console.log(req.query);
   const query = new RegExp(req.query.search, "i");
   console.log("query: ",query)
-  try{
-    let artworks = await ArtworkModel.find()
-    .populate("creator")
-    .populate("owner")
-    let result = artworks.filter(doc=> doc.title.match(query) 
-    || doc.description.match(query) || doc.creator.username.match(query)
-    || doc.owner.username.match(query))
-    res.status(200).json(result)
-  } catch(err) {
+  try {
+    let artworks = await ArtworkModel.find().populate("creator", [
+      "username",
+      "description",
+      "avatar",
+    ]);
+    let matchArtist = artworks
+      .filter((doc) => doc.creator.username.match(query))
+      .filter(
+        (doc, index, arr) =>
+          index ===
+          arr.findIndex((el) => el.creator.username === doc.creator.username)
+      );
+    let matchArtwork = artworks.filter(
+      (doc) => doc.title.match(query) || doc.description.match(query)
+    );
+    res
+      .status(200)
+      .json({ matchArtist: matchArtist, matchArtwork: matchArtwork });
+  } catch (err) {
     console.log(err);
   }
 });
