@@ -41,6 +41,7 @@ router.post("/signup", uploader.single("avatar"),  (req, res, next) => {
 
   UserModel.findOne({ email })
     .then((userDocument) => {
+      console.log(userDocument)
       if (userDocument) {
         return res.status(400).json({ message: "Email already taken" });
       }
@@ -66,7 +67,7 @@ router.post("/signup", uploader.single("avatar"),  (req, res, next) => {
           /* Login on signup */
           console.log(newUserDocument)
           req.session.currentUser = newUserDocument._id;
-          // console.log(req.session.currentUser)
+          console.log(req.session.currentUser)
           res.redirect("/api/auth/isLoggedIn");
         })
         .catch(next);
@@ -126,7 +127,7 @@ router.get('/update-password', (req, res, next)=>{
   res.redirect("/api/auth/isLoggedIn");
 })
   
-router.post('/update-password',async(req, res, next)=>{
+router.patch('/update-password',async(req, res, next)=>{
     let {formerPassword, newPassword}=req.body
     const user= await UserModel.findById(req.session.currentUser)
     const isSamePassword = bcrypt.compareSync(formerPassword, user.password);
@@ -144,10 +145,10 @@ router.post('/update-password',async(req, res, next)=>{
 router.get("/delete", async (req, res, next) => {
   try {
     await UserModel.findByIdAndRemove(req.session.currentUser);
-    req.session.destroy(err => {// We have to destroy the session here, otherwise we are not signed out.
-      res.sendStatus(204);
-    });
-    
+    req.session.destroy()
+    console.log("req.session ", req.session)
+    res.sendStatus(204).redirect("/api/auth/isLoggedIn")
+      // err => {// We have to destroy the session here, otherwise we are not signed out.
   } catch (err) {
     next(err);
   }

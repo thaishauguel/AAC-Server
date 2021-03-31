@@ -22,12 +22,14 @@ router.get("/my-current-sales", async (req, res, next) => {
         path: '_artworkId',
         populate: {
           path: 'creator',
+          select: ["username"]
         }
       })
       .populate({
         path: 'bids',
         populate: {
           path: 'bidder',
+          select: ["username"]
         }
       })
       res.status(200).json(currentSales)
@@ -45,6 +47,7 @@ router.get("/my-current-bids", async (req, res, next) => {
         path: 'bids',
         populate: {
           path: 'bidder',
+          select: ["username"]
         }
       })
     let filteredAuctions = []
@@ -63,7 +66,7 @@ router.get("/my-current-bids", async (req, res, next) => {
 // get all artworks owned by current user (for user dashboard)
 router.get("/my-collection", (req, res, next) => {
   ArtworkModel.find({ owner: req.session.currentUser })
-    .populate("creator")
+    .populate("creator", ["username", "description", "avatar"])
     .then((myArtworks) => res.status(200).json(myArtworks))
     .catch(next);
 });
@@ -103,7 +106,6 @@ router.patch("/my-profile/update", uploader.single("avatar"), (req, res, next) =
 // get all my creations
 router.get("/my-creations", (req, res, next) => {
   ArtworkModel.find({ creator: req.session.currentUser })
-    .populate("owner")
     .then((artworks) => res.status(200).json(artworks))
     .catch(next);
 });
