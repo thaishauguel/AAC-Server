@@ -6,7 +6,7 @@ const Usermodel = require("./../models/UserModel");
 
 // get all artworks which are for sale (for homepage)
 router.get("/", (req, res, next) => {
-  ArtworkModel.find({ forSale: true }).sort({title:1})
+  ArtworkModel.find({ forSale: true }).sort({title:1}).limit(11)
     .populate("creator", ["username", "description", "avatar"])
     .populate("owner", ["username", "avatar"])
     .then((artworks) => res.status(200).json(artworks))
