@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const AuctionModel=require('../models/AuctionModel')
 const ArtworkModel=require('../models/ArtworkModel')
+const UserModel=require('../models/UserModel')
 
 
 
@@ -33,7 +34,11 @@ router.get("/:id/last-auction", async (req, res, next)=> {
 router.post("/new", (req, res, next)=>{
     let {_artworkId, initialPrice, startingDate}= req.body
 
-    const _auctionOwnerId = req.session.currentUser
+    const _auctionOwnerId = req.session.currentUser;
+
+
+    
+
     const active = true
     const newAuction={
         _artworkId,
@@ -75,7 +80,6 @@ router.patch("/:id/new-bid", (req, res, next)=>{
 
 router.patch("/close-auction/:id", (req,res,next)=>{
     const {owner}=req.body
-    console.log('ceci est mon req.body', req.body)
 AuctionModel.findByIdAndUpdate(req.params.id, {active:false}, {new:true})
 .then((auction)=>{
     res.status(200).json(auction)
@@ -108,6 +112,20 @@ router.delete("/:id", (req, res, next) => {
     })
     .catch((err) => next(err));
 
+})
+
+
+//Update the credits of the buyer and the seller just after an auction was closed
+router.patch('/update-credits', async (req, res, next)=>{
+    try {const {bidValue, sellerId, buyerId}= req.body
+
+    let sellerUpdated = await UserModel.findByIdAndUpdate(sellerId, { $inc: { credit: bidValue }}, {new:true})
+    let buyerUpdated = await UserModel.findByIdAndUpdate(buyerId, { $inc: { credit:  - bidValue }}, {new:true})
+
+    res.status(200).json({message : "Transaction has been done and credits are updated"})}
+    catch(err) {
+        next(err)
+    }
 })
 
 module.exports = router;

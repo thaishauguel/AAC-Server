@@ -54,7 +54,7 @@ const profileRouter = require("./routes/profile");
 app.use("/api/auth", authRouter);
 app.use("/api/auctions", auctionsRouter);
 app.use("/api/artworks", artworksRouter);
-app.use("/api/profile", profileRouter);
+app.use("/api/profile",  profileRouter);
 
 
 // 404 Middleware
