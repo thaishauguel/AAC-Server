@@ -3,6 +3,8 @@ const router = express.Router();
 const AuctionModel=require('../models/AuctionModel')
 const ArtworkModel=require('../models/ArtworkModel')
 const UserModel=require('../models/UserModel')
+const protectPrivateRoute = require("../middlewares/protectPrivateRoute")
+
 
 
 
@@ -31,13 +33,10 @@ router.get("/:id/last-auction", async (req, res, next)=> {
     }
 })
 
-router.post("/new", (req, res, next)=>{
+router.post("/new", protectPrivateRoute,(req, res, next)=>{
     let {_artworkId, initialPrice, startingDate}= req.body
 
     const _auctionOwnerId = req.session.currentUser;
-
-
-    
 
     const active = true
     const newAuction={
@@ -57,7 +56,7 @@ router.post("/new", (req, res, next)=>{
     .catch(next)
 })
 
-router.patch("/:id/new-bid", (req, res, next)=>{
+router.patch("/:id/new-bid", protectPrivateRoute, (req, res, next)=>{
     const { bidValue } = req.body
     const bidder = req.session.currentUser
     const date = Date.now()
@@ -78,7 +77,7 @@ router.patch("/:id/new-bid", (req, res, next)=>{
     .catch(next)
 })
 
-router.patch("/close-auction/:id", (req,res,next)=>{
+router.patch("/close-auction/:id", protectPrivateRoute,(req,res,next)=>{
     const {owner}=req.body
 AuctionModel.findByIdAndUpdate(req.params.id, {active:false}, {new:true})
 .then((auction)=>{
@@ -93,7 +92,7 @@ AuctionModel.findByIdAndUpdate(req.params.id, {active:false}, {new:true})
 })
 
 // delete an auction (only the creator of the auction may delete it)
-router.delete("/:id", (req, res, next) => {
+router.delete("/:id", protectPrivateRoute,(req, res, next) => {
     AuctionModel.findById(req.params.id)
     .then((auction) => {
       if (auction._auctionOwnerId.toString() !== req.session.currentUser) {
@@ -116,7 +115,7 @@ router.delete("/:id", (req, res, next) => {
 
 
 //Update the credits of the buyer and the seller just after an auction was closed
-router.patch('/update-credits', async (req, res, next)=>{
+router.patch('/update-credits', protectPrivateRoute, async (req, res, next)=>{
     try {const {bidValue, sellerId, buyerId}= req.body
 
     let sellerUpdated = await UserModel.findByIdAndUpdate(sellerId, { $inc: { credit: bidValue }}, {new:true})

@@ -4,7 +4,7 @@ const uploader = require("./../config/cloudinary");
 const ArtworkModel = require("../models/ArtworkModel");
 const AuctionModel = require("../models/AuctionModel");
 const UserModel = require("../models/UserModel");
-
+const protectPrivateRoute = require("../middlewares/protectPrivateRoute")
 // const uploader = require("./../config/cloudinary");
 
 
@@ -15,7 +15,7 @@ const UserModel = require("../models/UserModel");
 //     .then((myCurrentSales) => res.status(200).json(myCurrentSales))
 //     .catch(next);
 // });
-router.get("/my-current-sales", async (req, res, next) => {
+router.get("/my-current-sales", protectPrivateRoute, async (req, res, next) => {
     try{const currentSales = await AuctionModel.find({ _auctionOwnerId: req.session.currentUser, active: true })
       .populate("_artworkId" )
       .populate({
@@ -39,7 +39,7 @@ router.get("/my-current-sales", async (req, res, next) => {
   });
 
 //get all active auctions on which I already bidded
-router.get("/my-current-bids", async (req, res, next) => {
+router.get("/my-current-bids",protectPrivateRoute, async (req, res, next) => {
   try {
     const activeAuctions = await AuctionModel.find({ active: true })
     .populate("_artworkId")  
@@ -64,7 +64,7 @@ router.get("/my-current-bids", async (req, res, next) => {
 });
 
 // get all artworks owned by current user (for user dashboard)
-router.get("/my-collection", (req, res, next) => {
+router.get("/my-collection",protectPrivateRoute, (req, res, next) => {
   ArtworkModel.find({ owner: req.session.currentUser })
     .populate("creator", ["username", "description", "avatar"])
     .then((myArtworks) => res.status(200).json(myArtworks))
@@ -72,14 +72,14 @@ router.get("/my-collection", (req, res, next) => {
 });
 
 // get current user (for user dashboard)
-router.get("/my-profile", (req, res, next) => {
+router.get("/my-profile",protectPrivateRoute, (req, res, next) => {
   UserModel.findById(req.session.currentUser )
     .then((user) => res.status(200).json(user))
     .catch(next);
 });
 
 // Update current user (for user dashboard)
-router.patch("/my-profile/update", uploader.single("avatar"), (req, res, next) => {
+router.patch("/my-profile/update",protectPrivateRoute, uploader.single("avatar"), (req, res, next) => {
   let { username, email, avatar, instagram, website,description, credit } = req.body;
   if (req.file){ avatar = req.file.path};
 
@@ -104,7 +104,7 @@ router.patch("/my-profile/update", uploader.single("avatar"), (req, res, next) =
 
 
 // get all my creations
-router.get("/my-creations", (req, res, next) => {
+router.get("/my-creations", protectPrivateRoute, (req, res, next) => {
   ArtworkModel.find({ creator: req.session.currentUser })
     .then((artworks) => res.status(200).json(artworks))
     .catch(next);
