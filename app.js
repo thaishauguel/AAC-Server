@@ -56,6 +56,14 @@ app.use("/api/auctions", auctionsRouter);
 app.use("/api/artworks", artworksRouter);
 app.use("/api/profile",  profileRouter);
 
+//FOR DEPLOYEMENT
+if (process.env.NODE_ENV === "production") {
+  app.use("*", (req, res, next) => {
+    // If no routes match, send them the React HTML.
+    res.sendFile(__dirname + "/public/index.html");
+  });
+}
+
 
 // 404 Middleware
 app.use((req, res, next) => {

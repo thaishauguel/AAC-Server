@@ -103,6 +103,7 @@ router.get("/results", async (req, res, next) => {
   const query = new RegExp(req.query.search, "i");
   console.log("query: ",query)
   try {
+    console.log(query)
     let artworks = await ArtworkModel.find().populate("creator", [
       "username",
       "description",
