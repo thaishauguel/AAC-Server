@@ -122,7 +122,7 @@ router.patch('/update-credits', async (req, res, next)=>{
     let sellerUpdated = await UserModel.findByIdAndUpdate(sellerId, { $inc: { credit: bidValue }}, {new:true})
     let buyerUpdated = await UserModel.findByIdAndUpdate(buyerId, { $inc: { credit:  - bidValue }}, {new:true})
 
-    res.status(200).json({message : "Transaction has been done and credits are updated"})}
+    res.status(200).json(sellerUpdated)}
     catch(err) {
         next(err)
     }
