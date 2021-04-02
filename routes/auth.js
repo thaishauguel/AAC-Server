@@ -3,6 +3,8 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const UserModel = require("../models/UserModel");
 const uploader = require("./../config/cloudinary");
+const protectPrivateRoute = require("../middlewares/protectPrivateRoute")
+
 
 
 const salt = 10;
@@ -99,12 +101,12 @@ router.get("/logout", (req, res, next) => {
 });
 
 
-router.get("/update", (req, res, next) => {
+router.get("/update", protectPrivateRoute, (req, res, next) => {
   res.redirect("/api/auth/isLoggedIn");
 
 });
 
-router.post("/update", uploader.single("avatar"), (req, res, next) => {
+router.post("/update", protectPrivateRoute, uploader.single("avatar"), (req, res, next) => {
     let { username, email, avatar, instagram, website,description, credit } = req.body;
     if (req.file){ avatar = req.file.path};
 
@@ -124,11 +126,11 @@ router.post("/update", uploader.single("avatar"), (req, res, next) => {
   .catch(next)
 })
 
-router.get('/update-password', (req, res, next)=>{
+router.get('/update-password', protectPrivateRoute, (req, res, next)=>{
   res.redirect("/api/auth/isLoggedIn");
 })
   
-router.patch('/update-password',async(req, res, next)=>{
+router.patch('/update-password',protectPrivateRoute, async(req, res, next)=>{
     let {formerPassword, newPassword}=req.body
     const user= await UserModel.findById(req.session.currentUser)
     const isSamePassword = bcrypt.compareSync(formerPassword, user.password);
@@ -143,25 +145,17 @@ router.patch('/update-password',async(req, res, next)=>{
     }
   )
 
-router.get("/delete", async (req, res, next) => {
-  try {
-    await UserModel.findByIdAndRemove(req.session.currentUser);
-    req.session.destroy()
-    console.log("req.session ", req.session)
-    res.sendStatus(204).redirect("/api/auth/isLoggedIn")
-      // err => {// We have to destroy the session here, otherwise we are not signed out.
-  } catch (err) {
-    next(err);
-  }
-});
-
-
-
-// -------- update and delete
-
-
-
-
+// router.get("/delete", async (req, res, next) => {
+//   try {
+//     await UserModel.findByIdAndRemove(req.session.currentUser);
+//     req.session.destroy()
+//     console.log("req.session ", req.session)
+//     res.sendStatus(204).redirect("/api/auth/isLoggedIn")
+//       // err => {// We have to destroy the session here, otherwise we are not signed out.
+//   } catch (err) {
+//     next(err);
+//   }
+// });
 
 
 module.exports = router;

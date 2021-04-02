@@ -3,10 +3,12 @@ const router = express.Router();
 const ArtworkModel = require("../models/ArtworkModel");
 const uploader = require("./../config/cloudinary");
 const Usermodel = require("./../models/UserModel");
+const protectPrivateRoute = require("../middlewares/protectPrivateRoute")
+
 
 // get all artworks which are for sale (for homepage)
 router.get("/", (req, res, next) => {
-  ArtworkModel.find({ forSale: true }).sort({title:1}).limit(11)
+  ArtworkModel.find({ forSale: true }).sort({title:1}).limit(12)
     .populate("creator", ["username", "description", "avatar"])
     .populate("owner", ["username", "avatar"])
     .then((artworks) => res.status(200).json(artworks))
@@ -25,7 +27,7 @@ router.get("/:id([a-z0-9]{24})", (req, res, next) => {
 
 
 // create a new artwork (for user dashboard)
-router.post("/new", uploader.single("image"), (req, res, next) => {
+router.post("/new", protectPrivateRoute, uploader.single("image"), (req, res, next) => {
   let { title, description, image } = req.body;
   if(req.file){ image = req.file.path}
   ArtworkModel.create({
@@ -41,7 +43,7 @@ router.post("/new", uploader.single("image"), (req, res, next) => {
 
 // update an artwork (for user dashboard) - only creators may update their own artwork
 router.patch(
-  "/:id([a-z0-9]{24})",
+  "/:id([a-z0-9]{24})", protectPrivateRoute,
   uploader.single("image"),
   (req, res, next) => {
     ArtworkModel.findById(req.params.id)
@@ -72,7 +74,7 @@ router.patch(
 );
 
 // delete an artwork (for user dashboard) - only creators may delete their own artwork
-router.delete("/:id", (req, res, next) => {
+router.delete("/:id", protectPrivateRoute,(req, res, next) => {
   ArtworkModel.findById(req.params.id)
     .then((artwork) => {
       if (artwork.creator.toString() !== req.session.currentUser) {
@@ -126,21 +128,6 @@ router.get("/results", async (req, res, next) => {
     console.log(err);
   }
 });
-      // { creator : {username: { $regex: req.query.search, $options: "i" }} }
 
-      // router.get("/results", (req, res, next) => {
-      //   // console.log(req.query);
-      
-      //   ArtworkModel.find({
-      //     $or: [
-      //       { title: { $regex: req.query.search, $options: "i" } },
-      //       { description: { $regex: req.query.search, $options: "i" } },
-      //     ],
-      //   })
-      //     .populate("creator")
-      //     .populate("owner")
-      //     .then((artworks) => res.status(200).json(artworks))
-      //     .catch(next);
-      // });
 
 module.exports = router;
