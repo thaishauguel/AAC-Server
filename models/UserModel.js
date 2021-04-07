@@ -18,7 +18,7 @@ const userSchema = new Schema({
     },
     avatar: {
         type: String,
-        default: "https://cdn.boldomatic.com/content/post/fl4sZw/LOVE-ME-I-M-AN-ARTIST?size=800"
+        default: "https://res.cloudinary.com/rbn33connect/image/upload/v1617207241/default_picture_yinhcz.jpg"
     },
     networks: {
         instagram: String,
